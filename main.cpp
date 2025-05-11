@@ -5,7 +5,7 @@
 HWND globalMainWindow;
 HMENU hMenu;
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-//void AddMenus(HWND);
+void AddMenus(HWND);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     WNDCLASSA wc = {0};
     wc.lpfnWndProc = WindowProc;
@@ -43,7 +43,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
         case WM_CREATE:
-            //AddMenus(hwnd);
+            AddMenus(hwnd);
             break;
         case WM_COMMAND:
             switch (LOWORD(wParam)) {
@@ -55,6 +55,15 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                     break;
             }
             break;
+        case WM_PAINT:
+            {
+                PAINTSTRUCT ps;
+                HDC hdc = BeginPaint(hwnd, &ps);
+                // Drawing code here
+
+                EndPaint(hwnd, &ps);
+            }
+            break;
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
@@ -62,4 +71,19 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             return DefWindowProcA(hwnd, uMsg, wParam, lParam);
     }
     return 0;
+}
+void AddMenus(HWND hwnd) {
+    hMenu = CreateMenu();
+    HMENU hFileMenu = CreatePopupMenu();
+    AppendMenuA(hFileMenu, MF_STRING, 1, "Open");
+    AppendMenuA(hFileMenu, MF_STRING, 2, "Exit");
+    AppendMenuA(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, "File");
+    SetMenu(hwnd, hMenu);
+}
+void drawTree(HDC hdc, HashTree<int>* tree) {
+    // Implement drawing logic for the hash tree
+    // This is a placeholder function
+    using namespace Gdiplus;
+    GdiplusStartupInput gdiplusStartupInput;
+    TextOutA(hdc, 10, 10, "Hash Tree", 9);
 }
