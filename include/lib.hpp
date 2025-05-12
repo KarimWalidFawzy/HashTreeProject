@@ -8,6 +8,12 @@
 #elif defined(__linux__)
 #include <SDL3/SDL.h>
 #endif
+//Hash function 
+long long int hashFunction(std::string str);
+//Hash function for transaction
+
+//Hash function for transaction
+
 //Hash tree 
 template <typename nodetype>class HashTreeNode{
         public:
@@ -32,4 +38,5 @@ typedef struct {
     std::string data;
     std::string hash;   
 }Transaction;
+long long int hashFunction(Transaction);
 #endif

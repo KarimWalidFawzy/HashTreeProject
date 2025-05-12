@@ -1,4 +1,12 @@
 #include "../include/lib.hpp"
+long long int hashFunction(Transaction t){
+    std::string str = std::to_string(t.id) + t.data + t.hash;
+    long long int hash = 0;
+    for(int i = 0; i < str.length(); i++){
+        hash = (hash * 31 + str[i]) % 1000000007;
+    }
+    return hash;
+}
 template <typename nodetype>
 void HashTree<nodetype>::insert(nodetype d){
     if(root == nullptr){

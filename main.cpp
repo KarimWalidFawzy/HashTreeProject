@@ -6,6 +6,12 @@ HWND globalMainWindow;
 HMENU hMenu;
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddMenus(HWND);
+void Message(const char* msg) {
+    MessageBoxA(globalMainWindow, msg, "Message", MB_OK);
+}
+void Error(const char* msg) {
+    MessageBoxA(globalMainWindow, msg, "Error", MB_OK | MB_ICONERROR);
+}
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
     WNDCLASSA wc = {0};
     wc.lpfnWndProc = WindowProc;
@@ -60,7 +66,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
                 PAINTSTRUCT ps;
                 HDC hdc = BeginPaint(hwnd, &ps);
                 // Drawing code here
-
+                
                 EndPaint(hwnd, &ps);
             }
             break;
@@ -85,5 +91,8 @@ void drawTree(HDC hdc, HashTree<int>* tree) {
     // This is a placeholder function
     using namespace Gdiplus;
     GdiplusStartupInput gdiplusStartupInput;
+    Graphics myGraphics(hdc);
+    
+    Rect Myrect(0, 0, 100, 100);
     TextOutA(hdc, 10, 10, "Hash Tree", 9);
 }
