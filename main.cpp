@@ -122,6 +122,38 @@ void AddMenus(HWND hwnd){
     AppendMenuA(hMenu, MF_STRING, 2, "Exit");
     SetMenu(hwnd, hMenu);
 }
+void drawNode(HDC hdc, HashTreeNode<Transaction>* node, int x, int y, int horizontalSpacing, int verticalSpacing) {
+    if (node == nullptr) {
+        return;
+    }
+
+    // 1. Draw the current node (e.g., a rectangle and its hash)
+    RECT nodeRect = {x - 20, y - 10, x + 20, y + 10}; // Example rectangle dimensions
+    FrameRect(hdc, &nodeRect, (HBRUSH)GetStockObject(BLACK_BRUSH));
+    std::string hashedval(std::to_string(hashFunction(node->data)));
+    DrawTextA(hdc, hashedval.c_str(), hashedval.length(), &nodeRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+    // 2. Calculate positions for left and right children
+    int leftChildX = x - horizontalSpacing / 2;
+    int rightChildX = x + horizontalSpacing / 2;
+    int childY = y + verticalSpacing;
+    int newHorizontalSpacing = horizontalSpacing / 2; // Adjust spacing for deeper levels
+
+    // 3. Draw the left child and the connecting line
+    if (node->left != nullptr) {
+        MoveToEx(hdc, x, y + 10, NULL); // Connect from the bottom of the current node
+        LineTo(hdc, leftChildX, childY - 10); // To the top of the left child
+        drawNode(hdc, node->left, leftChildX, childY, newHorizontalSpacing, verticalSpacing);
+    }
+
+    // 4. Draw the right child and the connecting line
+    if (node->right != nullptr) {
+        MoveToEx(hdc, x, y + 10, NULL); // Connect from the bottom of the current node
+        LineTo(hdc, rightChildX, childY - 10); // To the top of the right child
+        drawNode(hdc, node->right, rightChildX, childY, newHorizontalSpacing, verticalSpacing);
+    }
+}
+
 void drawTree(HDC hdc) {
     // Implement drawing logic for the hash tree
     // This is a placeholder function
@@ -140,25 +172,13 @@ void drawTree(HDC hdc) {
     HashTreeNode<Transaction> *Rright=R->right;
     // Draw the left subtree
     if (R != nullptr) {
-        std::string hashedval(std::to_string(hashFunction(R->data)));
-        TextOutA(hdc, 30, 50, hashedval.c_str(), hashedval.length());
-        //Draw the lines and rectangles to make it a full tree
-        RECT rect;  
-        GetClientRect(globalMainWindow, &rect);
-        HGDIOBJ oldPen = SelectObject(hdc, GetStockObject(BLACK_PEN));
-        MoveToEx(hdc, 30, 20, NULL);
-        LineTo(hdc, 10, 50);
-        MoveToEx(hdc, 10, 20, NULL);
-        LineTo(hdc, 10, 50);
-        Rectangle(hdc, 10, 20, 50, 50);
+        int initialX = rect.right / 2; // Center the root horizontally
+        int initialY = 50;             // Start the root at a certain vertical position
+        int initialHorizontalSpacing = rect.right / 2; // Initial horizontal spacing
+        int verticalSpacing = 60;                     // Vertical spacing between levels
+        drawNode(hdc, R, initialX, initialY, initialHorizontalSpacing, verticalSpacing);
     }
-    if (Rleft != nullptr) {
-    std::string hashedval(std::to_string(hashFunction(Rleft->data)));
-    TextOutA(hdc, 10, 40, hashedval.c_str(), hashedval.length()); 
-    }   
-    //Draw the right subtree
-    if (Rright != nullptr) {
-    std::string hashedval2(std::to_string(hashFunction(Rright->data)));
-    TextOutA(hdc, 10, 50, hashedval2.c_str(), hashedval2.length());
+    else{
+        TextOutA(hdc,40,50,"Tree is empty",9);
     }
 }
